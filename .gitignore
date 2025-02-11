@@ -1,0 +1,9 @@
+.env
+__pycache__/
+gen-lang-client-0009382783-cf0bfb2d1c0c.json
+.cache/
+response_data.pkl
+.ipynb
+response_data.pkl
+response_data.json
+.pkl
