@@ -1,7 +1,7 @@
-# __import__('pysqlite3')
-# import sys
-# import pysqlite3
-# sys.modules['sqlite3'] = sys.modules["pysqlite3"]
+__import__('pysqlite3')
+import sys
+import pysqlite3
+sys.modules['sqlite3'] = sys.modules["pysqlite3"]
 
 import streamlit as st
 from langchain_core.messages.chat import ChatMessage
@@ -16,18 +16,18 @@ logging.langsmith("SOOSEMII")
 #---------------------------------#
 #-------- Deploy Settings --------#
 #---------------------------------#
-# from google.oauth2 import service_account
-# import google.generativeai as genai  # genai import 추가
+from google.oauth2 import service_account
+import google.generativeai as genai  # genai import 추가
 
-# # Create API client.
-# credentials = service_account.Credentials.from_service_account_info(
-#     st.secrets["gcp_service_account"],
-# )
+# Create API client.
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+)
 
-# # Gemini 구성
-# genai.configure(
-#     credentials=credentials,
-# )
+# Gemini 구성
+genai.configure(
+    credentials=credentials,
+)
 ###################################
 
 
