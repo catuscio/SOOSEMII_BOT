@@ -9,18 +9,18 @@ logging.langsmith("SOOSEMII")
 #---------------------------------#
 #-------- Deploy Settings --------#
 #---------------------------------#
-# from google.oauth2 import service_account
-# import google.generativeai as genai  # genai import 추가
+from google.oauth2 import service_account
+import google.generativeai as genai  # genai import 추가
 
-# # Create API client.
-# credentials = service_account.Credentials.from_service_account_info(
-#     st.secrets["gcp_service_account"],
-# )
+# Create API client.
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+)
 
-# # Gemini 구성
-# genai.configure(
-#     credentials=credentials,
-# )
+# Gemini 구성
+genai.configure(
+    credentials=credentials,
+)
 
 
 #---------------------------------#
