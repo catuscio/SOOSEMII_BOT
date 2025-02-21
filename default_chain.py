@@ -16,6 +16,20 @@ from Retrievers.contextRetriever import context_retriever
 from dotenv import load_dotenv
 load_dotenv()
 
+###############
+from google.oauth2 import service_account
+import google.generativeai as genai  # genai import 추가
+
+# Create API client.
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+)
+
+# Gemini 구성
+genai.configure(
+    credentials=credentials,
+)
+
 # 세션 ID를 기반으로 세션 기록을 가져오는 함수
 def get_session_history(session_ids):
     if session_ids not in st.session_state["store_main"]:  # 세션 ID가 store에 없는 경우
@@ -33,7 +47,7 @@ def create_chain() :
     llm = ChatGoogleGenerativeAI(
         model="gemini-1.5-flash",
         temperature=0,
-        #credentials=credentials
+        credentials=credentials
     )
 
     # output parser
