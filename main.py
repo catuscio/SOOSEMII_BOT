@@ -4,24 +4,13 @@
 # sys.modules['sqlite3'] = sys.modules["pysqlite3"]
 
 import streamlit as st
-
 from langchain_core.messages.chat import ChatMessage
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import MessagesPlaceholder
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-from load_prompts import load_prompt
-# from Retrievers.ensembleRetriever import ensemble_retriever
-from Retrievers.contextRetriever import context_retriever
-
+from default_chain import create_chain
 from dotenv import load_dotenv
+from langchain_teddynote import logging
+
 load_dotenv()
-
-from langsmith import Client
-client = Client()
-
+logging.langsmith("SOOSEMII")
 
 
 #---------------------------------#
@@ -50,10 +39,26 @@ st.title("🧽수세미✨")
 # sidebar
 with st.sidebar :
     # clear dialouge
-    clear_btn = st.button("대화 초기화")
+    clear_btn = st.button("♻️대화 초기화")
+    catalog_btn = st.link_button("✅수강편람 다운로드", "https://board.sejong.ac.kr/boardview.do?pkid=166710&currentPage=2&searchField=ALL&siteGubun=19&menuGubun=1&bbsConfigFK=335&searchLowItem=ALL&searchValue=")
     session_id = st.text_input("세션 ID를 입력하세요.", "abc123")
-    st.write("대화 기억을 위한 세션 ID입니다. 아무 값이나 넣으셔도 무방합니다.")
+    st.write("대화 기억을 위한 입력입니다. 아무 숫자나 입력하셔도 됩니다.")
     st.markdown('[Powered by SMARCLE](https://www.smarcle.dev/)', unsafe_allow_html=True)
+
+with st.chat_message("assistant", avatar="🧽"):
+    st.write("""
+             안녕하세요🤗 수세미입니다🧽\n
+             """)
+
+description = st.container(border=True)
+description.write("""
+                 수강편람에서 어떤 지점이 궁금하신가요? 제가 답해드릴게요.\n
+                 최대한 구체적으로 작성해주시면 제가 더 잘 도와드릴 수 있어요.\n
+                 1️⃣정확한 확인을 위해 꼭 **📖수강편람**을 함께 확인해주세요.\n
+                 2️⃣수강편람과 수강신청 공지는 좌측 사이드바의 **[✅수강편람 다운로드]** 를 눌러보세요.\n
+                 3️⃣사용방법은 좌측 사이드바의 **[사용방법]**을 확인해주세요.\n
+                 ⚠️수강편람에 적혀있지 않은 내용은 답변이 어려워요😥
+                 """)
 
 #---------------------------------#
 #-------- Message Storing --------#
@@ -66,66 +71,20 @@ if "store_main" not in st.session_state:
     st.session_state["store_main"] = {}
 
 # add new message to storage
-def add_message(role, message) :
-    st.session_state["messages_main"].append(ChatMessage(role=role, content=message))
+def add_message(role, message, avatar) :
+    st.session_state["messages_main"].append(ChatMessage(role=role, content=message, avatar=avatar))
 
 # print all dialouge
 def print_messages() :
     for chat_message in st.session_state["messages_main"] :
-        st.chat_message(chat_message.role).write(chat_message.content)
+        if chat_message.role == "user":
+            avatar = "🧑‍💻"  # 사용자 아바타
+        elif chat_message.role == "assistant":
+            avatar = "🧽"  # AI 아바타
+        else:
+            avatar = None  # 다른 역할의 경우 기본 아바타 사용
+        st.chat_message(chat_message.role, avatar=avatar).write(chat_message.content)
 
-# 세션 ID를 기반으로 세션 기록을 가져오는 함수
-def get_session_history(session_ids):
-    if session_ids not in st.session_state["store_main"]:  # 세션 ID가 store에 없는 경우
-        # 새로운 ChatMessageHistory 객체를 생성하여 store에 저장
-        st.session_state["store_main"][session_ids] = ChatMessageHistory()
-    return st.session_state["store_main"][session_ids]  # 해당 세션 ID에 대한 세션 기록 반환
-
-
-#---------------------------------#
-#------------- Chain -------------#
-#---------------------------------#
-def create_chain() :
-    # prompt
-    prompt = load_prompt("prompts/basic.yaml")
-    prompt.messages.insert(1, MessagesPlaceholder(variable_name="chat_history"))
-
-    # model - 인증정보 추가
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
-        temperature=0,
-        #credentials=credentials
-    )
-
-    # output parser
-    output_parser = StrOutputParser()
-
-    # chain
-    chain = (
-        {
-            "context": lambda x: context_retriever().invoke(x["question"]),
-            "question": lambda x: x["question"] if isinstance(x, dict) else x,
-            "chat_history": lambda x: x["chat_history"]
-        }
-        | prompt
-        | llm
-        | output_parser
-    )
-    chain_with_history = RunnableWithMessageHistory(
-        chain,
-        get_session_history,
-        input_messages_key="question",
-        history_messages_key="chat_history",
-    )
-
-    return chain_with_history 
-
-with st.chat_message("assistant"):
-            st.write("""
-                     안녕하세요🤗 수세미입니다🧽\n
-                     수강편람에서 어떤 지점이 궁금하신가요❓ 제가 답해드릴게요‼️\n
-                     최대한 구체적으로 작성해주시면 제가 더 잘 도와드릴 수 있어요💁
-                     """)
 
 #---------------------------------#
 #---------- User Action ----------#
@@ -144,7 +103,7 @@ warning_msg = st.empty()
 
 if "chain_main" not in st.session_state:
     st.session_state["chain_main"] = create_chain()
-
+    
 # if input
 if user_input :
     # temporary
@@ -155,10 +114,11 @@ if user_input :
             {"question": user_input},
             config={"configurable": {"session_id": session_id}}
         )
+        
         # user input
-        st.chat_message("user").write(user_input)
+        st.chat_message("user", avatar="🧑‍💻").write(user_input)
 
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar="🧽"):
             # create empty container and print token by stream
             container = st.empty()
             ai_answer = ""
@@ -167,7 +127,7 @@ if user_input :
                 container.markdown(ai_answer)
 
             # add dialougue to storage
-            add_message("user", user_input)
-            add_message("assistant", ai_answer)
+            add_message("user", user_input, avatar="🧑‍💻")
+            add_message("assistant", ai_answer, avatar="🧽")
     else :
         warning_msg.error("문제가 발생했습니다.")

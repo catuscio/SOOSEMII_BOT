@@ -1,19 +1,10 @@
 import streamlit as st
-
 from langchain_core.messages.chat import ChatMessage
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import MessagesPlaceholder
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-from load_prompts import load_prompt
-from major_selection import major_selection
-from Retrievers.contextRetriever import course_context_retriever
-
+from default_chain import create_chain
 from dotenv import load_dotenv
+from langchain_teddynote import logging
 load_dotenv()
-
+logging.langsmith("SOOSEMII")
 
 #---------------------------------#
 #-------- Deploy Settings --------#
@@ -40,7 +31,8 @@ st.title("📌교과과정 도우미")
 # sidebar
 with st.sidebar :
     # clear dialouge
-    clear_btn = st.button("대화 초기화")
+    clear_btn = st.button("♻️대화 초기화")
+    catalog_btn = st.link_button("✅수강편람 다운로드", "https://board.sejong.ac.kr/boardview.do?pkid=166710&currentPage=2&searchField=ALL&siteGubun=19&menuGubun=1&bbsConfigFK=335&searchLowItem=ALL&searchValue=")
     session_id = st.text_input("세션 ID를 입력하세요.", "abc123")
     st.write("대화 기억을 위한 세션 ID입니다. 아무 값이나 넣으셔도 무방합니다.")
 
@@ -106,62 +98,19 @@ if "store_course" not in st.session_state:
     st.session_state["store_course"] = {}
 
 # add new message to storage
-def add_message(role, message) :
-    st.session_state["messages_course"].append(ChatMessage(role=role, content=message))
+def add_message(role, message, avatar) :
+    st.session_state["messages_course"].append(ChatMessage(role=role, content=message, avatar=avatar))
 
 # print all dialouge
 def print_messages() :
-    for chat_message in st.session_state["messages_course"] :
-        st.chat_message(chat_message.role).write(chat_message.content)
-
-# 세션 ID를 기반으로 세션 기록을 가져오는 함수
-def get_session_history(session_ids):
-    if session_ids not in st.session_state["store_course"]:  # 세션 ID가 store에 없는 경우
-        # 새로운 ChatMessageHistory 객체를 생성하여 store에 저장
-        st.session_state["store_course"][session_ids] = ChatMessageHistory()
-    return st.session_state["store_course"][session_ids]  # 해당 세션 ID에 대한 세션 기록 반환
-
-
-#---------------------------------#
-#------------- Chain -------------#
-#---------------------------------#
-def create_chain(start_page, end_page) :
-    # prompt
-    prompt = load_prompt("prompts/basic.yaml")
-    prompt.messages.insert(1, MessagesPlaceholder(variable_name="chat_history"))
-
-    # model - 인증정보 추가
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
-        temperature=0,
-        #credentials=credentials
-    )
-
-    # output parser
-    output_parser = StrOutputParser()
-
-    # retriever
-    retriever = course_context_retriever(start_page=start_page, end_page=end_page)
-
-    # chain
-    chain = (
-        {
-            "context": lambda x: retriever.invoke(x["question"]),
-            "question": lambda x: x["question"] if isinstance(x, dict) else x,
-            "chat_history": lambda x: x["chat_history"]
-        }
-        | prompt
-        | llm
-        | output_parser
-    )
-    chain_with_history = RunnableWithMessageHistory(
-        chain,
-        get_session_history,
-        input_messages_key="question",
-        history_messages_key="chat_history",
-    )
-
-    return chain_with_history 
+    for chat_message in st.session_state["messages_main"] :
+        if chat_message.role == "user":
+            avatar = "🧑‍💻"  # 사용자 아바타
+        elif chat_message.role == "assistant":
+            avatar = "🧽"  # AI 아바타
+        else:
+            avatar = None  # 다른 역할의 경우 기본 아바타 사용
+        st.chat_message(chat_message.role, avatar=avatar).write(chat_message.content)
 
 
 #---------------------------------#
@@ -190,12 +139,12 @@ warning_msg = st.empty()
 if "chain_course" not in st.session_state:
     if save:
         st.session_state["chain_course"] = create_chain(start_page, end_page)
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar="🧽"):
             st.write(f"""
                      {course}학번이시군요🥰 무엇이든 물어봐주세요. 제가 도와드릴게요.
                     """)
     else:
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar="🧽"):
             st.write("""
                      안녕하세요🤗 해당하는 학번에 맞는 교과과정을 알려드릴게요.\n
                      좌측 사이드바에서 학번을 입력하고 저장✅해주세요.\n
@@ -207,7 +156,7 @@ if "chain_course" not in st.session_state:
 if user_input :
     # temporary
     if "chain_course" not in st.session_state or not st.session_state["chain_course"]:
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar="🧽"):
             st.write("""
                      저장 버튼을 안 누르셨나요? 눌러주셔야 제가 답을 할 수 있어요😢
                     """)
@@ -221,9 +170,9 @@ if user_input :
             config={"configurable": {"session_id": session_id}}
         )
         # user input
-        st.chat_message("user").write(user_input)
+        st.chat_message("user", avatar="🧑‍💻").write(user_input)
 
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar="🧽"):
             # create empty container and print token by stream
             container = st.empty()
             ai_answer = ""
@@ -232,7 +181,7 @@ if user_input :
                 container.markdown(ai_answer)
 
             # add dialougue to storage
-            add_message("user", user_input)
-            add_message("assistant", ai_answer)
+            add_message("user", user_input, avatar="🧑‍💻")
+            add_message("assistant", ai_answer, avatar="🧽")
     else :
         warning_msg.error("문제가 발생했습니다.")

@@ -6,8 +6,8 @@ embeddings = UpstageEmbeddings(model="embedding-passage")
 def context_retriever() : 
     vectorstore = Chroma(
         embedding_function=embeddings,
-        persist_directory="2025_Upstage",
-        collection_name="2025"
+        persist_directory="2025-1-0217",
+        collection_name="2025-1-0217"
     )
     retriever = vectorstore.as_retriever(kwargs={"k":5})
     return retriever
@@ -15,8 +15,8 @@ def context_retriever() :
 def search_context(user_input) :
     vectorstore = Chroma(
         embedding_function=embeddings,
-        persist_directory="2025_Upstage",
-        collection_name="2025"
+        persist_directory="2025-1-0217",
+        collection_name="2025-1-0217"
     )
     answer = vectorstore.similarity_search(user_input, k=5)
     return answer
@@ -25,8 +25,8 @@ def search_context(user_input) :
 def course_context_retriever(start_page=None, end_page=None):
     vectorstore = Chroma(
         embedding_function=embeddings,
-        persist_directory="2025_Upstage",
-        collection_name="2025"
+        persist_directory="2025-1-0217",
+        collection_name="2025-1-0217"
     )
 
     # Define a filter dictionary for Chroma using $and operator
