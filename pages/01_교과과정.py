@@ -143,6 +143,7 @@ if "chain_course" not in st.session_state:
             st.write(f"""
                      {course}학번이시군요🥰 무엇이든 물어봐주세요. 제가 도와드릴게요.
                     """)
+        chain = st.session_state["chain_course"]
     else:
         with st.chat_message("assistant", avatar="🧽"):
             st.write("""
@@ -161,7 +162,6 @@ if user_input :
                      저장 버튼을 안 누르셨나요? 눌러주셔야 제가 답을 할 수 있어요😢
                     """)
 
-    chain = st.session_state["chain_course"]
 
     if chain is not None :
         response = chain.stream(
