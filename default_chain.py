@@ -17,7 +17,9 @@ from Retrievers.contextRetriever import course_context_retriever
 from dotenv import load_dotenv
 load_dotenv()
 
-###############
+#---------------------------------#
+#-------- Deploy Settings --------#
+#---------------------------------#
 from google.oauth2 import service_account
 import google.generativeai as genai  # genai import 추가
 
@@ -30,6 +32,8 @@ credentials = service_account.Credentials.from_service_account_info(
 genai.configure(
     credentials=credentials,
 )
+###################################
+
 
 # 세션 ID를 기반으로 세션 기록을 가져오는 함수
 def get_session_history(session_ids):
@@ -83,7 +87,7 @@ def create_course_chain(start_page, end_page):
     llm = ChatGoogleGenerativeAI(
         model="gemini-1.5-flash",
         temperature=0,
-        #credentials=credentials
+        credentials=credentials
     )
 
     # output parser
