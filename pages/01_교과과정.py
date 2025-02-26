@@ -33,7 +33,7 @@ with st.sidebar :
     # clear dialouge
     clear_btn = st.button("♻️대화 초기화")
     catalog_btn = st.link_button("✅수강편람 다운로드", "https://board.sejong.ac.kr/boardview.do?pkid=166710&currentPage=2&searchField=ALL&siteGubun=19&menuGubun=1&bbsConfigFK=335&searchLowItem=ALL&searchValue=")
-    session_id = st.text_input("세션 ID를 입력하세요.", "abc123")
+    session_id = st.text_input("세션 ID를 입력하세요.", "abc1234")
     st.write("대화 기억을 위한 세션 ID입니다. 아무 값이나 넣으셔도 무방합니다.")
 
     # 학번 입력
