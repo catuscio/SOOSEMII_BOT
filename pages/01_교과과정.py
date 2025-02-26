@@ -103,7 +103,7 @@ def add_message(role, message, avatar) :
 
 # print all dialouge
 def print_messages() :
-    for chat_message in st.session_state["messages_main"] :
+    for chat_message in st.session_state["messages_course"] :
         if chat_message.role == "user":
             avatar = "🧑‍💻"  # 사용자 아바타
         elif chat_message.role == "assistant":
