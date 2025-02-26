@@ -97,6 +97,9 @@ if "messages_course" not in st.session_state :
 if "store_course" not in st.session_state:
     st.session_state["store_course"] = {}
 
+if "chain_course" not in st.session_state:
+    st.session_state["chain_course"] = None
+    
 # add new message to storage
 def add_message(role, message, avatar) :
     st.session_state["messages_course"].append(ChatMessage(role=role, content=message, avatar=avatar))
