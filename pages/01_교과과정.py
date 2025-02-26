@@ -120,6 +120,9 @@ if clear_btn:
     st.session_state["messages_course"] = []
 if save:
     start_page, end_page = course_selection(course)
+    st.session_state["chain_course"] = create_course_chain(start_page, end_page)
+    with st.chat_message("assistant", avatar="🧽"):
+        st.write(f"{course}학번이시군요🥰 무엇이든 물어봐주세요. 제가 도와드릴게요.")
     # # stuInfo
     # stuInfo = f"""
     #     20{course}학년도 입학자\n
@@ -137,14 +140,7 @@ user_input = st.chat_input("나는 졸업하려면 뭐 들어야돼?")
 warning_msg = st.empty()
 
 if "chain_course" not in st.session_state:
-    if save:
-        st.session_state["chain_course"] = create_course_chain(start_page, end_page)
-        with st.chat_message("assistant", avatar="🧽"):
-            st.write(f"""
-                     {course}학번이시군요🥰 무엇이든 물어봐주세요. 제가 도와드릴게요.
-                    """)
-    else:
-        with st.chat_message("assistant", avatar="🧽"):
+    with st.chat_message("assistant", avatar="🧽"):
             st.write("""
                      안녕하세요🤗 해당하는 학번에 맞는 교과과정을 알려드릴게요.\n
                      좌측 사이드바에서 학번을 입력하고 저장✅해주세요.\n
