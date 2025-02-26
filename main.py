@@ -45,17 +45,13 @@ with st.sidebar :
     st.write("대화 기억을 위한 입력입니다. 아무 숫자나 입력하셔도 됩니다.")
     st.markdown('[Powered by SMARCLE](https://www.smarcle.dev/)', unsafe_allow_html=True)
 
-with st.chat_message("assistant", avatar="🧽"):
-    st.write("""
-             안녕하세요🤗 수세미입니다🧽\n
-             """)
-
 description = st.container(border=True)
 description.write("""
+                 안녕하세요🤗 수세미입니다🧽\n
                  수강편람에서 어떤 지점이 궁금하신가요? 제가 답해드릴게요.\n
                  최대한 구체적으로 작성해주시면 제가 더 잘 도와드릴 수 있어요.\n
                  1️⃣정확한 확인을 위해 꼭 **📖수강편람**을 함께 확인해주세요.\n
-                 2️⃣수강편람과 수강신청 공지는 좌측 사이드바의 **[✅수강편람 다운로드]** 를 눌러보세요.\n
+                 2️⃣수강편람과 수강신청 공지는 좌측 사이드바의 **[✅수강편람 다운로드]**를 눌러보세요.\n
                  3️⃣사용방법은 좌측 사이드바의 **[사용방법]**을 확인해주세요.\n
                  ⚠️수강편람에 적혀있지 않은 내용은 답변이 어려워요😥
                  """)
