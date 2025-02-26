@@ -99,7 +99,7 @@ if "store_course" not in st.session_state:
 
 if "chain_course" not in st.session_state:
     st.session_state["chain_course"] = None
-    
+
 # add new message to storage
 def add_message(role, message, avatar) :
     st.session_state["messages_course"].append(ChatMessage(role=role, content=message, avatar=avatar))
@@ -122,8 +122,12 @@ def print_messages() :
 if clear_btn:
     st.session_state["messages_course"] = []
 if save:
-    start_page, end_page = course_selection(course)
-    st.session_state["chain_course"] = create_course_chain(start_page, end_page)
+    # Add spinner to show loading state when processing
+    with st.spinner('교과과정 생성 중...'):
+        start_page, end_page = course_selection(course)
+        st.session_state["chain_course"] = create_course_chain(start_page, end_page)
+    st.success("교과과정이 설정되었습니다. 무엇이든 물어봐 주세요!")
+
     with st.chat_message("assistant", avatar="🧽"):
         st.write(f"{course}학번이시군요🥰 무엇이든 물어봐주세요. 제가 도와드릴게요.")
 
@@ -173,6 +177,3 @@ if user_input :
             # add dialougue to storage
             add_message("user", user_input, avatar="🧑‍💻")
             add_message("assistant", ai_answer, avatar="🧽")
-else :
-    if warning_msg:
-        warning_msg.error("문제가 발생했습니다.")
