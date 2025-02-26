@@ -116,14 +116,6 @@ def print_messages() :
 #---------------------------------#
 #---------- User Action ----------#
 #---------------------------------#
-if "chain_course" not in st.session_state:
-    with st.chat_message("assistant", avatar="🧽"):
-            st.write("""
-                     안녕하세요🤗 해당하는 학번에 맞는 교과과정을 알려드릴게요.\n
-                     좌측 사이드바에서 학번을 입력하고 저장✅해주세요.\n
-                     질문을 최대한 구체적으로 해주시면 제가 도와드리기 쉽답니다!📚
-                     """)
-            
 if clear_btn:
     st.session_state["messages_course"] = []
 if save:
@@ -131,12 +123,6 @@ if save:
     st.session_state["chain_course"] = create_course_chain(start_page, end_page)
     with st.chat_message("assistant", avatar="🧽"):
         st.write(f"{course}학번이시군요🥰 무엇이든 물어봐주세요. 제가 도와드릴게요.")
-    # # stuInfo
-    # stuInfo = f"""
-    #     20{course}학년도 입학자\n
-    #     {dept}학 {major}\n
-    #     {level}-{semester}\n
-    # """
 
 # show previous dialogue
 print_messages()
@@ -147,6 +133,13 @@ user_input = st.chat_input("나는 졸업하려면 뭐 들어야돼?")
 # error window
 warning_msg = st.empty()
 
+if st.session_state["chain_course"] is None:
+    with st.chat_message("assistant", avatar="🧽"):
+            st.write("""
+                     안녕하세요🤗 해당하는 학번에 맞는 교과과정을 알려드릴게요.\n
+                     좌측 사이드바에서 학번을 입력하고 저장✅해주세요.\n
+                     질문을 최대한 구체적으로 해주시면 제가 도와드리기 쉽답니다!📚
+                     """)
 
 # if input
 if user_input :
