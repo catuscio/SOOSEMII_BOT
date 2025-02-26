@@ -150,7 +150,7 @@ if user_input :
                      저장 버튼을 안 누르셨나요? 눌러주셔야 제가 답을 할 수 있어요😢
                     """)
 
-    elif st.session_state["chain_course"] is not None:
+    else:
         response = st.session_state["chain_course"].stream(
             # 질문 입력
             {"question": user_input},
@@ -170,5 +170,6 @@ if user_input :
             # add dialougue to storage
             add_message("user", user_input, avatar="🧑‍💻")
             add_message("assistant", ai_answer, avatar="🧽")
-    else :
+else :
+    if warning_msg:
         warning_msg.error("문제가 발생했습니다.")
