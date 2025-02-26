@@ -12,6 +12,7 @@ logging.langsmith("SOOSEMII")
 from load_prompts import load_prompt
 # from Retrievers.ensembleRetriever import ensemble_retriever
 from Retrievers.contextRetriever import context_retriever
+from Retrievers.contextRetriever import course_context_retriever
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -57,6 +58,44 @@ def create_chain() :
     chain = (
         {
             "context": lambda x: context_retriever().invoke(x["question"]),
+            "question": lambda x: x["question"] if isinstance(x, dict) else x,
+            "chat_history": lambda x: x["chat_history"]
+        }
+        | prompt
+        | llm
+        | output_parser
+    )
+    chain_with_history = RunnableWithMessageHistory(
+        chain,
+        get_session_history,
+        input_messages_key="question",
+        history_messages_key="chat_history",
+    )
+
+    return chain_with_history 
+
+def create_course_chain(start_page, end_page):
+    # prompt
+    prompt = load_prompt("prompts/basic.yaml")
+    prompt.messages.insert(1, MessagesPlaceholder(variable_name="chat_history"))
+
+    # model - 인증정보 추가
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-1.5-flash",
+        temperature=0,
+        #credentials=credentials
+    )
+
+    # output parser
+    output_parser = StrOutputParser()
+
+    # retriever
+    retriever = course_context_retriever(start_page=start_page, end_page=end_page)
+
+    # chain
+    chain = (
+        {
+            "context": lambda x: retriever.invoke(x["question"]),
             "question": lambda x: x["question"] if isinstance(x, dict) else x,
             "chat_history": lambda x: x["chat_history"]
         }

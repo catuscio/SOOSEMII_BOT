@@ -1,6 +1,6 @@
 import streamlit as st
 from langchain_core.messages.chat import ChatMessage
-from default_chain import create_chain
+from default_chain import create_course_chain
 from dotenv import load_dotenv
 from langchain_teddynote import logging
 load_dotenv()
@@ -138,7 +138,7 @@ warning_msg = st.empty()
 
 if "chain_course" not in st.session_state:
     if save:
-        st.session_state["chain_course"] = create_chain(start_page, end_page)
+        st.session_state["chain_course"] = create_course_chain(start_page, end_page)
         with st.chat_message("assistant", avatar="🧽"):
             st.write(f"""
                      {course}학번이시군요🥰 무엇이든 물어봐주세요. 제가 도와드릴게요.
