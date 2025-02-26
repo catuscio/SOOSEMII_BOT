@@ -163,8 +163,8 @@ if user_input :
                     """)
 
 
-    if chain is not None :
-        response = chain.stream(
+    elif st.session_state["chain_course"] is not None:
+        response = st.session_state["chain_course"].stream(
             # 질문 입력
             {"question": user_input},
             config={"configurable": {"session_id": session_id}}
