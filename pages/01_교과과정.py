@@ -116,6 +116,14 @@ def print_messages() :
 #---------------------------------#
 #---------- User Action ----------#
 #---------------------------------#
+if "chain_course" not in st.session_state:
+    with st.chat_message("assistant", avatar="🧽"):
+            st.write("""
+                     안녕하세요🤗 해당하는 학번에 맞는 교과과정을 알려드릴게요.\n
+                     좌측 사이드바에서 학번을 입력하고 저장✅해주세요.\n
+                     질문을 최대한 구체적으로 해주시면 제가 도와드리기 쉽답니다!📚
+                     """)
+            
 if clear_btn:
     st.session_state["messages_course"] = []
 if save:
@@ -139,24 +147,15 @@ user_input = st.chat_input("나는 졸업하려면 뭐 들어야돼?")
 # error window
 warning_msg = st.empty()
 
-if "chain_course" not in st.session_state:
-    with st.chat_message("assistant", avatar="🧽"):
-            st.write("""
-                     안녕하세요🤗 해당하는 학번에 맞는 교과과정을 알려드릴게요.\n
-                     좌측 사이드바에서 학번을 입력하고 저장✅해주세요.\n
-                     질문을 최대한 구체적으로 해주시면 제가 도와드리기 쉽답니다!📚
-                     """)
-
 
 # if input
 if user_input :
     # temporary
-    if "chain_course" not in st.session_state or not st.session_state["chain_course"]:
+    if st.session_state["chain_course"] is None:
         with st.chat_message("assistant", avatar="🧽"):
             st.write("""
                      저장 버튼을 안 누르셨나요? 눌러주셔야 제가 답을 할 수 있어요😢
                     """)
-
 
     elif st.session_state["chain_course"] is not None:
         response = st.session_state["chain_course"].stream(
