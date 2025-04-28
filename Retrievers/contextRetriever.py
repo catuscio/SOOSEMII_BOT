@@ -1,3 +1,7 @@
+import sys
+import pysqlite3
+sys.modules["sqlite3"] = pysqlite3
+
 from langchain_upstage import UpstageEmbeddings
 from langchain_chroma import Chroma
 
