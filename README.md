@@ -1,5 +1,5 @@
 # 수강신청이 어려운 세종대학교 학생들을 위한 도우미 - 수세미SOOSEMII
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://<your-custom-subdomain>.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://soosemiibot.streamlit.app/)
 
 ![image](https://github.com/user-attachments/assets/e281083c-ed09-4e5c-8728-3c2971bdad74)
 수강편람 독해에 어려움을 겪는 학생들을 위한 수강편람 PDF 기반 자연어 QA 챗봇
