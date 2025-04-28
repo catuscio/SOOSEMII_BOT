@@ -4,6 +4,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.caches import BaseCache
+from langchain_core.callbacks import Callbacks
 from langchain_google_genai import ChatGoogleGenerativeAI
 ChatGoogleGenerativeAI.model_rebuild()
 from langsmith import traceable
