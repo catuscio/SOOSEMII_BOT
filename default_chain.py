@@ -3,6 +3,7 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain.cache import BaseCache
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langsmith import traceable
 from langchain_teddynote import logging
