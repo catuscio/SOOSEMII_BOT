@@ -2,13 +2,11 @@ import sys
 import pysqlite3
 sys.modules["sqlite3"] = pysqlite3
 
+from chromadb.config import Settings
+settings = Settings(persist_directory="db")
+
 from langchain_upstage import UpstageEmbeddings
 from langchain_chroma import Chroma
-import chromadb
-client = chromadb.PersistentClient(
-    path="db",
-    settings=chromadb.Settings(allow_reset=True)
-)
 
 embeddings = UpstageEmbeddings(model="embedding-passage")
 
