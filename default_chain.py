@@ -5,6 +5,7 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.caches import BaseCache
 from langchain_google_genai import ChatGoogleGenerativeAI
+ChatGoogleGenerativeAI.model_rebuild()
 from langsmith import traceable
 from langchain_teddynote import logging
 logging.langsmith("SOOSEMII")
