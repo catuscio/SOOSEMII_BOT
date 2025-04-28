@@ -4,10 +4,10 @@ sys.modules["sqlite3"] = pysqlite3
 
 from langchain_upstage import UpstageEmbeddings
 from langchain_chroma import Chroma
-from chromadb.config import Settings
-_client_settings = Settings(
-    chroma_db_impl="duckdb+parquet",
-    persist_directory="db"
+import chromadb
+client = chromadb.PersistentClient(
+    path="db",
+    settings=chromadb.Settings(allow_reset=True)
 )
 
 embeddings = UpstageEmbeddings(model="embedding-passage")
